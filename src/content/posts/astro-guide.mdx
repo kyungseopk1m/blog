@@ -1,0 +1,63 @@
+---
+title: "Astro로 블로그 만들기"
+pubDate: 2026-01-20
+description: "Astro 프레임워크로 정적 블로그를 만드는 방법을 소개합니다."
+category: "Development"
+draft: false
+---
+
+# Astro로 블로그 만들기
+
+Astro는 콘텐츠 중심 웹사이트를 만들기에 최적화된 프레임워크입니다.
+
+## Astro의 장점
+
+### 1. Zero JavaScript by Default
+
+Astro는 기본적으로 JavaScript를 전송하지 않습니다. 필요한 경우에만 선택적으로 hydration을 수행합니다.
+
+```astro
+---
+// 서버에서만 실행되는 코드
+const data = await fetchData();
+---
+
+<div>{data.title}</div>
+```
+
+### 2. 컴포넌트 아일랜드
+
+필요한 부분만 인터랙티브하게 만들 수 있습니다:
+
+```astro
+<SearchBox client:load />
+<StaticContent />
+```
+
+### 3. 다양한 프레임워크 지원
+
+- React
+- Vue
+- Svelte
+- Solid
+- Preact
+
+## 콘텐츠 컬렉션
+
+Astro의 Content Collections를 사용하면 타입 안전한 방식으로 콘텐츠를 관리할 수 있습니다.
+
+```typescript
+import { defineCollection, z } from 'astro:content';
+
+const posts = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.date(),
+    description: z.string(),
+  }),
+});
+```
+
+## 결론
+
+Astro는 빠르고 SEO 친화적인 블로그를 만들기에 완벽한 선택입니다.

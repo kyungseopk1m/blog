@@ -1,0 +1,90 @@
+---
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2 justify-center mb-8">
+  <button
+    class="filter-btn active px-4 py-2 text-sm rounded-full border border-slate-300 dark:border-zinc-600 transition-all"
+    data-category="all"
+  >
+    전체
+  </button>
+  {categories.map((category) => (
+    <button
+      class="filter-btn px-4 py-2 text-sm rounded-full border border-slate-300 dark:border-zinc-600 transition-all"
+      data-category={category}
+    >
+      {category}
+    </button>
+  ))}
+</div>
+
+<script is:inline>
+  function initCategoryFilter() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const postItems = document.querySelectorAll('.blog-post-item');
+    const yearGroups = document.querySelectorAll('.year-group');
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const selectedCategory = button.getAttribute('data-category');
+
+        // Update active state
+        filterButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Filter posts with smooth animation
+        postItems.forEach((item) => {
+          const itemCategory = item.getAttribute('data-category');
+          const shouldShow = selectedCategory === 'all' || itemCategory === selectedCategory;
+
+          if (shouldShow) {
+            item.classList.remove('hiding');
+          } else {
+            item.classList.add('hiding');
+          }
+        });
+
+        // Hide/show year groups based on visible posts
+        yearGroups.forEach((yearGroup) => {
+          const postsInYear = yearGroup.querySelectorAll('.blog-post-item');
+          const hasVisiblePost = Array.from(postsInYear).some(
+            (post) => !post.classList.contains('hiding')
+          );
+
+          if (hasVisiblePost) {
+            yearGroup.classList.remove('hiding');
+          } else {
+            yearGroup.classList.add('hiding');
+          }
+        });
+      });
+    });
+  }
+
+  // View Transitions 사용 시 페이지 전환마다 실행
+  document.addEventListener('astro:page-load', initCategoryFilter);
+</script>
+
+<style>
+  .filter-btn {
+    cursor: pointer;
+    background-color: transparent;
+  }
+
+  .filter-btn:hover {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+
+  .filter-btn.active {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,94 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  page: Page<CollectionEntry<'posts'>>;
+}
+
+const { page } = Astro.props;
+const { currentPage, lastPage, url } = page;
+
+// 한 그룹에 5개 페이지씩 표시
+const GROUP_SIZE = 5;
+
+// 현재 페이지가 속한 그룹 계산 (0부터 시작)
+const currentGroup = Math.floor((currentPage - 1) / GROUP_SIZE);
+
+// 현재 그룹의 시작/끝 페이지
+const groupStart = currentGroup * GROUP_SIZE + 1;
+const groupEnd = Math.min(groupStart + GROUP_SIZE - 1, lastPage);
+
+// 표시할 페이지 번호 배열
+const pageNumbers = Array.from(
+  { length: groupEnd - groupStart + 1 },
+  (_, i) => groupStart + i
+);
+
+// 이전/다음 그룹이 있는지 확인
+const hasPrevGroup = groupStart > 1;
+const hasNextGroup = groupEnd < lastPage;
+
+// 이전/다음 그룹의 첫 페이지로 이동하는 URL
+const prevGroupUrl = hasPrevGroup ? `/page/${groupStart - 1}` : undefined;
+const nextGroupUrl = hasNextGroup ? `/page/${groupEnd + 1}` : undefined;
+
+// 페이지 URL 생성 함수
+function getPageUrl(pageNum: number): string {
+  return pageNum === 1 ? '/' : `/page/${pageNum}`;
+}
+---
+
+{lastPage > 1 && (
+  <nav class="flex items-center justify-center gap-1 sm:gap-2 mt-12" aria-label="페이지네이션">
+    <!-- 이전 그룹 버튼 -->
+    {hasPrevGroup ? (
+      <a
+        href={prevGroupUrl}
+        class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-600 dark:text-zinc-300 hover:text-accent transition-colors"
+        aria-label="이전 페이지 그룹"
+      >
+        &lt;
+      </a>
+    ) : (
+      <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-300 dark:text-zinc-600">
+        &lt;
+      </div>
+    )}
+
+    <!-- 페이지 번호 -->
+    {pageNumbers.map((pageNum) => (
+      pageNum === currentPage ? (
+        <div
+          class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-semibold text-accent"
+          aria-current="page"
+        >
+          {pageNum}
+        </div>
+      ) : (
+        <a
+          href={getPageUrl(pageNum)}
+          class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-600 dark:text-zinc-300 hover:text-accent transition-colors"
+          aria-label={`페이지 ${pageNum}`}
+        >
+          {pageNum}
+        </a>
+      )
+    ))}
+
+    <!-- 다음 그룹 버튼 -->
+    {hasNextGroup ? (
+      <a
+        href={nextGroupUrl}
+        class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-600 dark:text-zinc-300 hover:text-accent transition-colors"
+        aria-label="다음 페이지 그룹"
+      >
+        &gt;
+      </a>
+    ) : (
+      <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-300 dark:text-zinc-600">
+        &gt;
+      </div>
+    )}
+  </nav>
+)}

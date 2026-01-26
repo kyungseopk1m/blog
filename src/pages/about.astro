@@ -1,0 +1,47 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Header from '@components/layout/Header.astro';
+import Footer from '@components/layout/Footer.astro';
+---
+
+<Layout title="About" description="개발자 소개">
+  <Header />
+  <main class="flex-1 py-8 sm:py-12">
+    <article class="markdown">
+      <h1>About</h1>
+
+      <p>
+        테스트 코드와 안정적인 아키텍쳐에 관심이 많은 백엔드 개발자입니다.
+        <br />
+        <code>극작</code>과 <code>컴퓨터과학</code>을 전공했고, 요즘은 몰입하는 즐거움에 빠져 있어요.
+        <br />
+        개발 이외에는 예술과 겨울을 좋아합니다.
+      </p>
+
+      <h2>Contact</h2>
+      <ul>
+        <li>
+          <a href="https://linkedin.com/in/김경섭" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/kyungseopk1m" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+        </li>
+        <li>
+          <a href="mailto:bask.keem@gmail.com">
+            bask.keem@gmail.com
+          </a>
+        </li>
+        <li>
+          <a href="https://blog.naver.com/kxxseop" target="_blank" rel="noopener noreferrer">
+            <span class="text-slate-500 dark:text-zinc-600">Blog (deprecated)</span>
+          </a>
+        </li>
+      </ul>
+    </article>
+  </main>
+  <Footer showRss={true} />
+</Layout>

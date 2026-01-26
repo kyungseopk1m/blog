@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDateShort } from '@/utils/date';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+}
+
+const { posts } = Astro.props;
+
+// Group posts by year
+const postsByYear = posts.reduce((acc, post) => {
+  const year = post.data.pubDate.getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, CollectionEntry<'posts'>[]>);
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<div class="flex flex-col space-y-10">
+  {years.map((year) => (
+    <div class="year-group" data-year={year}>
+      <h3 class="year-header text-xl font-semibold mb-4">{year}</h3>
+      <div class="space-y-2">
+        {postsByYear[Number(year)].map((post) => (
+          <div class="blog-post-item" data-category={post.data.category}>
+            <a
+              href={`/posts/${post.slug}`}
+              class="flex items-baseline gap-4 py-2 group"
+            >
+              <span
+                class="flex-shrink-0 w-16 text-sm transition-colors"
+                style="color: var(--color-accent);"
+              >
+                {formatDateShort(post.data.pubDate)}
+              </span>
+              <span class="flex-1 group-hover:opacity-70 transition-opacity">
+                {post.data.title}
+              </span>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .blog-post-item {
+    opacity: 1;
+    max-height: 200px;
+    overflow: hidden;
+    transition: opacity 0.35s ease-out, max-height 0.35s ease-out, transform 0.35s ease-out;
+  }
+
+  .blog-post-item.hiding {
+    opacity: 0;
+    max-height: 0;
+    margin: 0 !important;
+    padding: 0;
+    transform: translateY(-8px);
+  }
+
+  .year-group {
+    opacity: 1;
+    max-height: 10000px;
+    overflow: hidden;
+    transition: opacity 0.35s ease-out, max-height 0.35s ease-out;
+  }
+
+  .year-group.hiding {
+    opacity: 0;
+    max-height: 0;
+  }
+</style>

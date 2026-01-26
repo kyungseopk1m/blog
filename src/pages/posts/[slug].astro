@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import Header from '@components/layout/Header.astro';
+import Footer from '@components/layout/Footer.astro';
+import TOC from '@components/post/TOC.astro';
+import { formatDate } from '@/utils/date';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { title, pubDate, description, category } = post.data;
+const { Content, headings } = await post.render();
+---
+
+<Layout title={title} description={description}>
+  <Header />
+  <main class="flex-1 py-8 sm:py-12">
+    <article>
+      <header class="mb-10 text-center">
+        <div class="flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-zinc-400 mb-4">
+          <time datetime={pubDate.toISOString()}>
+            {formatDate(pubDate)}
+          </time>
+          <span>•</span>
+          <span style="color: var(--color-accent);">
+            {category}
+          </span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold">
+          {title}
+        </h1>
+      </header>
+
+      <TOC headings={headings} />
+
+      <div class="markdown">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Layout>

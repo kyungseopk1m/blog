@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 5 80 88">
+  <!-- Ghost shape in blog blue color #007AFF -->
+  <path
+    fill="#007AFF"
+    d="M 50 10
+       C 28 10, 15 23, 15 45
+       L 15 88
+       L 25 78
+       L 35 88
+       L 50 78
+       L 65 88
+       L 75 78
+       L 85 88
+       L 85 45
+       C 85 23, 72 10, 50 10 Z"
+  />
+  <!-- Left eye -->
+  <rect x="32" y="35" width="12" height="20" rx="6" fill="white"/>
+  <!-- Right eye -->
+  <rect x="56" y="35" width="12" height="20" rx="6" fill="white"/>
+</svg>

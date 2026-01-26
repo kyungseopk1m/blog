@@ -1,0 +1,50 @@
+---
+interface Props {
+  headings: {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to show h2 and h3 only
+const tocHeadings = headings.filter((h) => h.depth <= 3);
+---
+
+{tocHeadings.length > 0 && (
+  <nav class="toc">
+    <h2 class="text-lg font-semibold mb-4">목차</h2>
+    <ul class="space-y-2">
+      {tocHeadings.map((heading) => (
+        <li
+          class:list={[
+            'text-sm',
+            { 'ml-4': heading.depth === 3 }
+          ]}
+        >
+          <a
+            href={`#${heading.slug}`}
+            class="text-slate-600 dark:text-zinc-300 hover:opacity-70 transition-opacity"
+            style="&:hover { color: var(--color-accent); }"
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .toc {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .toc a:hover {
+    color: var(--color-accent);
+  }
+</style>

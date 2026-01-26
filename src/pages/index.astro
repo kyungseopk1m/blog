@@ -1,0 +1,168 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import Header from '@components/layout/Header.astro';
+import Footer from '@components/layout/Footer.astro';
+import PostList from '@components/post/PostList.astro';
+import Pagination from '@components/post/Pagination.astro';
+
+const PAGE_SIZE = 10;
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// 첫 페이지용 Page 객체 생성
+const page: Page<CollectionEntry<'posts'>> = {
+  data: sortedPosts.slice(0, PAGE_SIZE),
+  start: 0,
+  end: PAGE_SIZE - 1,
+  total: sortedPosts.length,
+  currentPage: 1,
+  size: PAGE_SIZE,
+  lastPage: Math.ceil(sortedPosts.length / PAGE_SIZE),
+  url: {
+    current: '/',
+    prev: undefined,
+    next: sortedPosts.length > PAGE_SIZE ? '/page/2' : undefined,
+  },
+};
+---
+
+<Layout title="Home">
+  <Header />
+  <main class="flex-1 py-8 sm:py-12">
+    <div class="mb-12 typing-container">
+      <p class="typing-wrapper text-xl sm:text-2xl font-medium" data-text="Debugging life, one commit at a time.">
+        <span class="typing-text"></span><span class="typing-cursor"></span>
+      </p>
+    </div>
+
+    <PostList page={page} />
+    <Pagination page={page} />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .typing-container {
+    min-height: 2.5rem;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .typing-wrapper {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    display: inline-block;
+    white-space: pre;
+  }
+
+  .typing-text {
+    display: inline;
+    white-space: pre;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: var(--color-accent);
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    animation: blink 1.2s step-end infinite;
+  }
+
+  .typing-cursor.typing-started {
+    /* 타이핑 중에는 커서 고정 (깜빡이지 않음) */
+    animation: none;
+    opacity: 1;
+  }
+
+  .typing-cursor.typing-complete {
+    /* 타이핑 완료 후 커서 7번 깜빡임 */
+    animation: blink 1.2s step-end 7;
+  }
+
+  .typing-cursor.typing-done {
+    /* 깜빡임 후 커서 제거 */
+    display: none;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function initTypingEffect() {
+    const wrapper = document.querySelector('.typing-wrapper') as HTMLElement;
+    if (!wrapper) return;
+
+    const typingElement = wrapper.querySelector('.typing-text') as HTMLElement;
+    const cursorElement = wrapper.querySelector('.typing-cursor') as HTMLElement;
+
+    if (!typingElement || !cursorElement) return;
+    if (cursorElement.classList.contains('typing-done')) return;
+
+    const text = wrapper.getAttribute('data-text') || '';
+    let index = 0;
+
+    function type() {
+      if (index === 0) {
+        cursorElement.classList.add('typing-started');
+      }
+
+      if (index < text.length) {
+        const char = text.charAt(index);
+        const prevChar = index > 0 ? text.charAt(index - 1) : '';
+
+        // 띄어쓰기를 입력하기 전에 살짝 딜레이 (손가락 이동 시간)
+        let preDelay = 0;
+        if (char === ' ') {
+          preDelay = 100 + Math.random() * 50;
+        }
+        // 띄어쓰기 후 다음 문자 입력 전에도 살짝 딜레이 (생각하는 시간)
+        else if (prevChar === ' ') {
+          preDelay = 80 + Math.random() * 60;
+        }
+
+        setTimeout(() => {
+          // 텍스트 업데이트 (띄어쓰기도 포함)
+          typingElement.textContent += char;
+          index++;
+
+          let delay = 120 + Math.random() * 60;
+
+          // 쉼표 후 긴 일시정지
+          if (char === ',') {
+            delay = 400;
+          }
+
+          setTimeout(type, delay);
+        }, preDelay);
+      } else {
+        // 타이핑 완료: 커서 7번 깜빡임
+        cursorElement.classList.remove('typing-started');
+        cursorElement.classList.add('typing-complete');
+
+        // 7번 깜빡인 후 커서 제거 (1.2s * 7 = 8.4초)
+        setTimeout(() => {
+          cursorElement.classList.remove('typing-complete');
+          cursorElement.classList.add('typing-done');
+        }, 8400);
+      }
+    }
+
+    setTimeout(type, 500);
+  }
+
+  document.addEventListener('astro:page-load', initTypingEffect);
+</script>

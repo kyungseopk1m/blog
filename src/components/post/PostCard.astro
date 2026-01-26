@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '@/utils/date';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { title, pubDate, description, category } = post.data;
+---
+
+<article class="group">
+  <a href={`/posts/${post.slug}`} class="block">
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-400">
+        <time datetime={pubDate.toISOString()}>
+          {formatDate(pubDate)}
+        </time>
+        <span>•</span>
+        <span class="transition-colors" style="color: var(--color-accent);">
+          {category}
+        </span>
+      </div>
+      <h2 class="text-xl font-semibold group-hover:opacity-70 transition-opacity dark:text-white">
+        {title}
+      </h2>
+      <p class="text-slate-600 dark:text-zinc-300 excerpt-markdown line-clamp-2">
+        {description}
+      </p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
