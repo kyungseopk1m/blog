@@ -75,7 +75,14 @@ const navs = [
 
 <script>
   function setupSearchButton() {
-    document.getElementById('search-btn')?.addEventListener('click', () => {
+    const searchBtn = document.getElementById('search-btn');
+    if (!searchBtn) return;
+
+    // 기존 리스너 제거를 위해 data 속성 체크
+    if (searchBtn.dataset.initialized) return;
+    searchBtn.dataset.initialized = 'true';
+
+    searchBtn.addEventListener('click', () => {
       if ((window as any).openSearchModal) {
         (window as any).openSearchModal();
       }
@@ -87,13 +94,24 @@ const navs = [
     const sunIcon = document.getElementById('sun-icon');
     const moonIcon = document.getElementById('moon-icon');
 
+    if (!toggle || !sunIcon || !moonIcon) return;
+
+    // 이미 초기화되었으면 아이콘만 업데이트하고 리턴
+    if (toggle.dataset.initialized) {
+      const isDark = document.documentElement.classList.contains('dark');
+      sunIcon.classList.toggle('hidden', isDark);
+      moonIcon.classList.toggle('hidden', !isDark);
+      return;
+    }
+    toggle.dataset.initialized = 'true';
+
     function updateIcons() {
       const isDark = document.documentElement.classList.contains('dark');
-      sunIcon?.classList.toggle('hidden', isDark);
-      moonIcon?.classList.toggle('hidden', !isDark);
+      sunIcon.classList.toggle('hidden', isDark);
+      moonIcon.classList.toggle('hidden', !isDark);
     }
 
-    toggle?.addEventListener('click', () => {
+    toggle.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       updateIcons();
@@ -102,15 +120,20 @@ const navs = [
     updateIcons();
   }
 
-  // 초기 로드
-  setupSearchButton();
-  setupThemeToggle();
-
-  // ViewTransitions 페이지 전환 후
-  document.addEventListener('astro:page-load', () => {
+  function init() {
     setupSearchButton();
     setupThemeToggle();
-  });
+  }
+
+  // 초기 로드: DOM 준비 완료 후 실행
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // ViewTransitions 페이지 전환 후
+  document.addEventListener('astro:page-load', init);
 </script>
 
 <style>

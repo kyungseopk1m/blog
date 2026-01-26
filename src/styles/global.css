@@ -3,7 +3,7 @@
 @import "tailwindcss";
 
 /* Tailwind v4 다크모드 설정 */
-@custom-variant dark (&:where(.dark, .dark *));
+@variant dark (.dark &);
 
 @theme {
   --color-accent: #007AFF;
