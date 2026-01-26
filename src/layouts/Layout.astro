@@ -36,17 +36,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       }
     </script>
 
-    <!-- ViewTransitions 후 테마 복원 -->
+    <!-- ViewTransitions 시 현재 테마 상태 유지 -->
     <script is:inline>
-      document.addEventListener('astro:after-swap', () => {
-        const theme = localStorage.getItem('theme');
-        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-        // 라이트모드: 사용자가 light 선택 OR (선택 없음 AND 시스템이 light)
-        const isLight = theme === 'light' || (!theme && prefersLight);
-        if (!isLight) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+      document.addEventListener('astro:before-swap', (event) => {
+        // 현재 페이지의 dark 클래스 상태를 새 페이지에 그대로 복사
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          event.newDocument.documentElement.classList.add('dark');
         }
       });
     </script>
