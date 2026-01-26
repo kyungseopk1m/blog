@@ -1,0 +1,5 @@
+* linguist-vendored
+*.astro linguist-vendored=false
+*.ts linguist-vendored=false
+*.tsx linguist-vendored=false
+*.mdx linguist-vendored=false
