@@ -49,7 +49,7 @@ const page: Page<CollectionEntry<'posts'>> = {
 
 <style>
   .typing-container {
-    min-height: 2.5rem;
+    min-height: 4rem;
     max-width: 48rem;
     margin-left: auto;
     margin-right: auto;
@@ -57,15 +57,32 @@ const page: Page<CollectionEntry<'posts'>> = {
     padding-right: 1rem;
   }
 
+  @media (min-width: 640px) {
+    .typing-container {
+      min-height: 2.5rem;
+    }
+  }
+
   .typing-wrapper {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     display: inline-block;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   .typing-text {
     display: inline;
-    white-space: pre;
+    white-space: pre-wrap;
+  }
+
+  /* 데스크톱에서는 한 줄 유지 */
+  @media (min-width: 640px) {
+    .typing-wrapper {
+      white-space: pre;
+    }
+    .typing-text {
+      white-space: pre;
+    }
   }
 
   .typing-cursor {
