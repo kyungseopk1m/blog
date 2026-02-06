@@ -9,8 +9,8 @@ export async function GET(context: APIContext) {
   );
 
   return rss({
-    title: 'kyungseopk1m.github.io',
-    description: '개발과 학습 내용을 기록하는 공간입니다.',
+    title: 'Bask',
+    description: 'Debugging life, one commit at a time.',
     site: context.site ?? 'https://kyungseopk1m.github.io',
     items: sortedPosts.map((post) => ({
       title: post.data.title,
