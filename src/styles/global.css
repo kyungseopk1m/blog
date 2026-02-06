@@ -105,7 +105,7 @@ img, video, iframe, canvas, svg {
   blockquote,
   ol,
   ul {
-    @apply mb-6 break-all;
+    @apply mb-8 break-all;
   }
 
   blockquote {
