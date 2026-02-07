@@ -187,6 +187,22 @@ img, video, iframe, canvas, svg {
   }
 }
 
+/* Center content variant */
+.markdown-center {
+  text-align: center;
+
+  blockquote,
+  ol,
+  ul {
+    text-align: left;
+  }
+
+  img {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /* Excerpt markdown (for post cards) */
 .excerpt-markdown {
   code {

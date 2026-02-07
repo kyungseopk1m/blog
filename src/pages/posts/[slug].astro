@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, pubDate, description, category } = post.data;
+const { title, pubDate, description, category, centerContent } = post.data;
 const { Content, headings } = await post.render();
 ---
 
@@ -45,7 +45,7 @@ const { Content, headings } = await post.render();
 
       <TOC headings={headings} />
 
-      <div class="markdown">
+      <div class:list={["markdown", { "markdown-center": centerContent }]}>
         <Content />
       </div>
     </article>
