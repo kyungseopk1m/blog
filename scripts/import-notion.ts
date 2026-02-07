@@ -3,7 +3,7 @@ import { join, basename, extname, dirname } from 'path';
 import AdmZip from 'adm-zip';
 
 const POSTS_DIR = 'src/content/posts';
-const IMAGES_DIR = 'public/images/posts';
+const IMAGES_DIR = 'src/assets/images/posts';
 const TEMP_DIR = '.notion-temp';
 const NOTION_IMPORTS_DIR = 'notion-imports';
 
@@ -302,7 +302,7 @@ function importNotionZip(zipPath: string, existingSlugs: Set<string>, forceOverw
 
             const newImageName = item; // Keep original name for simpler path matching
             const newImagePath = join(imageSlugDir, newImageName);
-            const webPath = `/images/posts/${slug}/${newImageName}`;
+            const webPath = `../../assets/images/posts/${slug}/${newImageName}`;
 
             copyFileSync(itemPath, newImagePath);
             imageFiles.set(item, webPath);
