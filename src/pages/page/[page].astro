@@ -1,18 +1,14 @@
 ---
 import type { GetStaticPathsOptions } from 'astro';
-import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
 import PostList from '@components/post/PostList.astro';
 import Pagination from '@components/post/Pagination.astro';
+import { getSortedPosts } from '@/utils/posts';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-  const sortedPosts = allPosts.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
-
+  const sortedPosts = await getSortedPosts();
   return paginate(sortedPosts, { pageSize: 10 });
 }
 

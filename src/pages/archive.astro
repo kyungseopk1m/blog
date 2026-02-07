@@ -1,19 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
 import CategoryFilter from '@components/archive/CategoryFilter.astro';
 import Timeline from '@components/archive/Timeline.astro';
+import { getSortedPosts } from '@/utils/posts';
 
-const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const sortedPosts = await getSortedPosts();
 
 // Get unique categories
 const categories = Array.from(
-  new Set(allPosts.map((post) => post.data.category))
+  new Set(sortedPosts.map((post) => post.data.category))
 ).sort();
 ---
 

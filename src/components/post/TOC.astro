@@ -14,7 +14,7 @@ const tocHeadings = headings.filter((h) => h.depth <= 3);
 ---
 
 {tocHeadings.length > 0 && (
-  <nav class="toc">
+  <nav class="toc" aria-label="목차">
     <h2 class="text-lg font-semibold mb-4">목차</h2>
     <ul class="space-y-2">
       {tocHeadings.map((heading) => (
@@ -27,7 +27,6 @@ const tocHeadings = headings.filter((h) => h.depth <= 3);
           <a
             href={`#${heading.slug}`}
             class="text-slate-600 dark:text-zinc-300 hover:opacity-70 transition-opacity"
-            style="&:hover { color: var(--color-accent); }"
           >
             {heading.text}
           </a>

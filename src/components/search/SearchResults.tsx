@@ -1,101 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import FlexSearch from 'flexsearch';
 import { formatDate } from '@/utils/date';
-
-interface SearchDocument {
-  slug: string;
-  title: string;
-  description: string;
-  content: string;
-  category: string;
-  pubDate: string;
-}
-
-interface SearchResult {
-  slug: string;
-  title: string;
-  description: string;
-  category: string;
-  pubDate: string;
-}
+import { useSearchIndex } from '@/hooks/useSearchIndex';
 
 export default function SearchResults() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [index, setIndex] = useState<FlexSearch.Document<SearchDocument> | null>(null);
-  const [documents, setDocuments] = useState<SearchDocument[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadSearchIndex = async () => {
-      try {
-        const response = await fetch('/search-index.json');
-        const data: SearchDocument[] = await response.json();
-        setDocuments(data);
-
-        const searchIndex = new FlexSearch.Document<SearchDocument>({
-          document: {
-            id: 'slug',
-            index: ['title', 'description', 'content'],
-            store: ['slug', 'title', 'description', 'category', 'pubDate'],
-          },
-          tokenize: 'forward',
-          cache: true,
-        });
-
-        data.forEach((doc) => {
-          searchIndex.add(doc);
-        });
-
-        setIndex(searchIndex);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to load search index:', error);
-        setIsLoading(false);
-      }
-    };
-
-    loadSearchIndex();
-  }, []);
-
-  const handleSearch = useCallback(
-    (searchQuery: string) => {
-      setQuery(searchQuery);
-
-      if (!index || !searchQuery.trim()) {
-        setResults([]);
-        return;
-      }
-
-      const searchResults = index.search(searchQuery, {
-        limit: 10,
-        enrich: true,
-      });
-
-      // Flatten and deduplicate results
-      const uniqueResults = new Map<string, SearchResult>();
-
-      searchResults.forEach((fieldResult) => {
-        fieldResult.result.forEach((item) => {
-          if (typeof item !== 'number' && item.doc) {
-            const doc = item.doc;
-            if (!uniqueResults.has(doc.slug)) {
-              uniqueResults.set(doc.slug, {
-                slug: doc.slug,
-                title: doc.title,
-                description: doc.description,
-                category: doc.category,
-                pubDate: doc.pubDate,
-              });
-            }
-          }
-        });
-      });
-
-      setResults(Array.from(uniqueResults.values()));
-    },
-    [index]
-  );
+  const { results, query, isLoading, search } = useSearchIndex({ lazy: false });
 
   return (
     <div className="w-full">
@@ -104,7 +11,7 @@ export default function SearchResults() {
           type="text"
           placeholder="검색어를 입력하세요..."
           value={query}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => search(e.target.value, 10)}
           className="w-full px-4 py-3 text-lg border border-slate-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-500 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
           style={{ '--tw-ring-color': 'var(--color-accent)' } as React.CSSProperties}
           autoFocus

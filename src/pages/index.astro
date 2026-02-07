@@ -1,19 +1,17 @@
 ---
 import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
 import PostList from '@components/post/PostList.astro';
 import Pagination from '@components/post/Pagination.astro';
+import { SITE_DESCRIPTION } from '@/consts';
+import { getSortedPosts } from '@/utils/posts';
 
 const PAGE_SIZE = 10;
 
-const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const sortedPosts = await getSortedPosts();
 
 // 첫 페이지용 Page 객체 생성
 const page: Page<CollectionEntry<'posts'>> = {
@@ -36,7 +34,7 @@ const page: Page<CollectionEntry<'posts'>> = {
   <Header />
   <main class="flex-1 py-8 sm:py-12">
     <div class="mb-12 typing-container">
-      <p class="typing-wrapper text-xl sm:text-2xl font-medium" data-text="Debugging life, one commit at a time.">
+      <p class="typing-wrapper text-xl sm:text-2xl font-medium" data-text={SITE_DESCRIPTION}>
         <span class="typing-text"></span><span class="typing-cursor"></span>
       </p>
     </div>

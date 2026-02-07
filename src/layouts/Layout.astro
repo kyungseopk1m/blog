@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import SearchModal from '@components/search/SearchModal';
+import { SITE_TITLE, SITE_DEFAULT_DESCRIPTION } from '@/consts';
 
 interface Props {
   title: string;
@@ -10,9 +11,9 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
-const siteTitle = 'Bask';
-const fullTitle = title === 'Home' ? siteTitle : `${title} | ${siteTitle}`;
-const siteDescription = description || '개인 블로그';
+const fullTitle = title === 'Home' ? SITE_TITLE : `${title} | ${SITE_TITLE}`;
+const siteDescription = description || SITE_DEFAULT_DESCRIPTION;
+// TODO: Replace with a proper PNG/JPG OG image (SVG not supported by most social platforms)
 const siteImage = image || '/favicon.svg';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -23,8 +24,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="pmXBoT9vBTiq7efCLSrTPdiNNI09_QSt704LR_Wp06c" />
+
+    <!-- Preconnect to font CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Font stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
 
     <!-- 깜빡임 방지: 페이지 로드 시 즉시 테마 적용 -->
     <script is:inline>
@@ -57,6 +69,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={siteDescription} />
     <meta property="og:image" content={new URL(siteImage, Astro.site)} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content={SITE_TITLE} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
@@ -66,7 +80,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:image" content={new URL(siteImage, Astro.site)} />
 
     <meta name="generator" content={Astro.generator} />
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col bg-white dark:bg-[#1a1a1a] text-slate-900 dark:text-white">
     <div class="max-w-2xl mx-auto w-full px-4 flex flex-col flex-1">
