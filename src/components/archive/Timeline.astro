@@ -69,11 +69,13 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
     opacity: 1;
     max-height: 10000px;
     overflow: hidden;
-    transition: opacity 0.35s ease-out, max-height 0.35s ease-out;
+    transition: opacity 0.35s ease-out, max-height 0.35s ease-out, margin 0.35s ease-out;
   }
 
   .year-group.hiding {
     opacity: 0;
     max-height: 0;
+    margin: 0 !important;
+    padding: 0;
   }
 </style>
