@@ -31,7 +31,7 @@ export default function SearchResults() {
               <a href={`/posts/${result.slug}`} className="block">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-400">
-                    <time>{formatDate(result.pubDate)}</time>
+                    <time datetime={result.pubDate}>{formatDate(result.pubDate)}</time>
                     <span>•</span>
                     <span style={{ color: 'var(--color-accent)' }}>{result.category}</span>
                   </div>

@@ -141,7 +141,7 @@ export default function SearchModal() {
                   }`}
                 >
                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400 mb-1">
-                    <span>{formatDate(result.pubDate)}</span>
+                    <time datetime={result.pubDate}>{formatDate(result.pubDate)}</time>
                     <span>•</span>
                     <span style={{ color: 'var(--color-accent)' }}>{result.category}</span>
                   </div>

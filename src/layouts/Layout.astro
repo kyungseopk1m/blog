@@ -13,8 +13,7 @@ interface Props {
 const { title, description, image } = Astro.props;
 const fullTitle = title === 'Home' ? SITE_TITLE : `${title} | ${SITE_TITLE}`;
 const siteDescription = description || SITE_DEFAULT_DESCRIPTION;
-// TODO: Replace with a proper PNG/JPG OG image (SVG not supported by most social platforms)
-const siteImage = image || '/favicon.svg';
+const siteImage = image || '/og-image.png';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -80,7 +79,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:site_name" content={SITE_TITLE} />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={siteDescription} />

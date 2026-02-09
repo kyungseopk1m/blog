@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import FlexSearch from 'flexsearch';
 import type { SearchDocument, SearchResult } from '@/types/search';
 
@@ -13,11 +13,13 @@ export function useSearchIndex(options: UseSearchIndexOptions = {}) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(!lazy);
+  const hasLoadedRef = useRef(false);
 
   const loadSearchIndex = useCallback(async () => {
-    if (index) return; // Already loaded
+    if (hasLoadedRef.current) return; // Already loaded or loading
 
     try {
+      hasLoadedRef.current = true;
       setIsLoading(true);
       const response = await fetch('/search-index.json');
       const data: SearchDocument[] = await response.json();
@@ -39,10 +41,11 @@ export function useSearchIndex(options: UseSearchIndexOptions = {}) {
       setIndex(searchIndex);
     } catch (error) {
       console.error('Failed to load search index:', error);
+      hasLoadedRef.current = false; // Allow retry on error
     } finally {
       setIsLoading(false);
     }
-  }, [index]);
+  }, []);
 
   // Auto-load if not lazy
   useEffect(() => {
