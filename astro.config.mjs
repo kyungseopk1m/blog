@@ -17,7 +17,8 @@ export default defineConfig({
     }
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    assetsInclude: ['**/*.heic', '**/*.HEIC', '**/*.heif', '**/*.HEIF']
   },
 
   integrations: [mdx(), react()]

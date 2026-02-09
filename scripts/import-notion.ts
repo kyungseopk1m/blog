@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync, rmSync, statSync } from 'fs';
 import { join, basename, extname, dirname } from 'path';
+import { execSync } from 'child_process';
 import AdmZip from 'adm-zip';
 
 const POSTS_DIR = 'src/content/posts';
@@ -30,6 +31,18 @@ function cleanDir(dir: string) {
     } catch (e) {
       // ignore
     }
+  }
+}
+
+function convertHeicToJpg(inputPath: string, outputPath: string): void {
+  // Use macOS built-in sips command for reliable HEIC conversion
+  // sips supports HEIC natively and produces high-quality output
+  try {
+    execSync(`sips -s format jpeg -s formatOptions 100 "${inputPath}" --out "${outputPath}"`, {
+      stdio: 'pipe'
+    });
+  } catch (error) {
+    throw new Error(`sips conversion failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -178,7 +191,7 @@ function getAllZipFiles(dirPath: string): string[] {
     .map(file => join(dirPath, file));
 }
 
-function importNotionZip(zipPath: string, existingSlugs: Set<string>, forceOverwrite: boolean): ImportResult {
+async function importNotionZip(zipPath: string, existingSlugs: Set<string>, forceOverwrite: boolean): Promise<ImportResult> {
   console.log(`\nProcessing: ${basename(zipPath)}`);
 
   const result: ImportResult = {
@@ -276,7 +289,14 @@ function importNotionZip(zipPath: string, existingSlugs: Set<string>, forceOverw
     // Find and copy images
     const imageFiles = new Map<string, string>();
     const mdDir = dirname(mdFile);
-    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
+    // Support all common image formats
+    const imageExtensions = [
+      '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg',
+      '.heic', '.heif',  // Apple formats
+      '.avif',           // Modern format
+      '.bmp', '.ico',    // Legacy formats
+      '.tiff', '.tif'    // Professional formats
+    ];
 
     // Look for images in the same directory and subdirectory with same name
     const dirsToCheck = [mdDir];
@@ -300,14 +320,31 @@ function importNotionZip(zipPath: string, existingSlugs: Set<string>, forceOverw
             const imageSlugDir = join(IMAGES_DIR, slug);
             mkdirSync(imageSlugDir, { recursive: true });
 
-            const newImageName = item; // Keep original name for simpler path matching
-            const newImagePath = join(imageSlugDir, newImageName);
+            const isHeic = ext === '.heic' || ext === '.heif';
+            let newImageName = item;
+            let newImagePath = join(imageSlugDir, newImageName);
+
+            // Convert HEIC to high-quality JPG
+            if (isHeic) {
+              newImageName = item.replace(/\.(heic|heif)$/i, '.jpg');
+              newImagePath = join(imageSlugDir, newImageName);
+
+              try {
+                convertHeicToJpg(itemPath, newImagePath);
+                console.log(`  ✅ Converted HEIC to JPG: ${item} -> ${newImageName}`);
+              } catch (error) {
+                const errorMsg = error instanceof Error ? error.message : String(error);
+                console.error(`  ⚠️  Failed to convert ${item}: ${errorMsg}`);
+                console.error(`  Copying as-is instead`);
+                copyFileSync(itemPath, newImagePath);
+              }
+            } else {
+              copyFileSync(itemPath, newImagePath);
+              console.log(`  Copied image: ${item}`);
+            }
+
             const webPath = `../../assets/images/posts/${slug}/${newImageName}`;
-
-            copyFileSync(itemPath, newImagePath);
             imageFiles.set(item, webPath);
-
-            console.log(`  Copied image: ${item} -> ${webPath}`);
           }
         }
       }
@@ -438,7 +475,7 @@ console.log(`📝 Found ${existingSlugs.size} existing post(s)\n`);
 const results: ImportResult[] = [];
 
 for (const zipPath of zipPaths) {
-  const result = importNotionZip(zipPath, existingSlugs, forceFlag);
+  const result = await importNotionZip(zipPath, existingSlugs, forceFlag);
   results.push(result);
 }
 
