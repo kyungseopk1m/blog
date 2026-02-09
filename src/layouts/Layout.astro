@@ -43,6 +43,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <link rel="canonical" href={canonicalURL} />
     <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
 
     <!-- 깜빡임 방지: 페이지 로드 시 즉시 테마 적용 -->
     <script is:inline>
