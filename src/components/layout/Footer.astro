@@ -7,7 +7,7 @@ const { showRss = false } = Astro.props;
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="mt-16 sm:mt-20 mb-4 sm:mb-6 text-center text-slate-600 dark:text-zinc-400 text-sm sm:text-base">
+<footer class="mt-16 sm:mt-20 mb-4 sm:mb-6 text-center text-slate-600 dark:text-zinc-400 text-xs sm:text-sm">
   {showRss && (
     <a
       href="/rss.xml"
@@ -22,6 +22,6 @@ const currentYear = new Date().getFullYear();
   )}
   <p>
     <span class="mr-2">Copyright &copy; {currentYear}</span>
-    <span>Kyungseop Kim. All rights reserved.</span>
+    <span>Kyungseop Kim</span>
   </p>
 </footer>
