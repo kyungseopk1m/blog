@@ -7,7 +7,7 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://kyungseopk1m.github.io',
+  site: 'https://kskim.dev',
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
