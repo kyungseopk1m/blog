@@ -18,7 +18,7 @@
 
 html {
   font-size: 18px;
-  scrollbar-gutter: stable;
+  overflow-y: scroll;
   transition: background-color 0.3s ease-out, color 0.3s ease-out;
 }
 
@@ -170,7 +170,8 @@ img, video, iframe, canvas, svg {
   }
 
   :not(pre, h1, h2, h3, h4, h5, h6) > code {
-    @apply break-all text-sm px-1 py-0.5 mx-0.5 rounded-md whitespace-normal;
+    @apply break-all px-1 py-0.5 mx-0.5 rounded-md whitespace-normal;
+    font-size: 0.95em;
   }
 
   :not(pre, h1, h2, h3, h4, h5, h6) > code:not(.astro-code) {
