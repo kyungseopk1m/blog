@@ -3,7 +3,7 @@ import { getSortedPosts } from '@/utils/posts';
 
 export async function GET(context: APIContext) {
   const posts = await getSortedPosts();
-  const siteUrl = (context.site?.toString() ?? 'https://kyungseopk1m.github.io').replace(/\/$/, '') + '/';
+  const siteUrl = (context.site?.toString() ?? 'https://kskim.dev').replace(/\/$/, '') + '/';
 
   // 정적 페이지 정의
   const staticPages = [
